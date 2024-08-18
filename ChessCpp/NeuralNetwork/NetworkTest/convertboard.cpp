@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "C:/Chess_Engine/chess-engine/ChessCpp/chess.hpp"
+#include "chess.hpp"
 
 // Using floats to normalize values between 0 and 1
 using BoardRow = std::array<int, 8>;

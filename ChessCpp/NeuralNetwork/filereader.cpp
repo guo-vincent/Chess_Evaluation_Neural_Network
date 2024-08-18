@@ -10,7 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "C:/Chess_Engine/chess-engine/ChessCpp/chess.hpp"
+#include "chess.hpp"
 
 using BoardRow = std::array<int, 8>;
 
