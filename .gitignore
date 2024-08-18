@@ -1,0 +1,53 @@
+# Virtual environment
+venv/
+env/
+*.pyc
+*.pyo
+__pycache__/
+
+# IDE or editor specific files
+.vscode/
+.idea/
+*.swp
+
+# System or temporary files
+.DS_Store
+Thumbs.db
+
+# Compiled Python files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Local configuration file
+.env
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Data directory
+data/
+
+# Debugging code:
+chess-engine/ChessCpp/Analysis/*.py
+chess-engine/ChessCpp/Engine.cpp
+chess-engine/ChessCpp/ChessTree.hpp
+chess-engine/ChessCpp/NeuralNetwork/NetworkTest
+
+# Intermediary Preprocessing Files:
+chess-engine/ChessCpp/NeuralNetwork/qualifyCheckmates.cpp
+chess-engine/ChessCpp/NeuralNetwork/removeStalemates.cpp
+chess-engine/ChessCpp/NeuralNetwork/seperateWandB.cpp
+
+# Intermediary CSV files:
+chess-engine/ChessCpp/NeuralNetwork/CSVFiles/BlackFinal.csv
+chess-engine/ChessCpp/NeuralNetwork/CSVFiles/WhiteFinal.csv
+chess-engine/ChessCpp/NeuralNetwork/CSVFiles/chessData.csv
+chess-engine/ChessCpp/NeuralNetwork/CSVFiles/FilteredchessData.csv
+chess-engine/ChessCpp/NeuralNetwork/CSVFiles/Final.csv
+chess-engine/ChessCpp/NeuralNetwork/CSVFiles/test.csv
+
+# Scrapped Code:
+chess-engine/ChessCpp/NeuralNetwork/RandomForest_(Unused)
+
