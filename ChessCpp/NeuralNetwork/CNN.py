@@ -10,8 +10,8 @@ import json
 total_number = 12956364 # Number of matrices in the file
 white_matrices_total = 6473070
 black_matrices_total = 6483294
-file_name_white = R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\CSVFiles\White.csv"
-file_name_black = R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\CSVFiles\Black.csv"
+file_name_white = R"CSVFiles\White.csv"
+file_name_black = R"CSVFiles\Black.csv"
 number_matrixes_white = 6473070    # Specify the number of matrices you want to read
 number_matrixes_black = 6483294    # Specify the number of matrices you want to read
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     print(f"Validation Loss: {loss}")
     print(f"Validation Metric: {metric}")
 
-    model_white.export(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Chess_White_2")
+    model_white.export(R"Chess_White_2")
 
     # Extract loss values from the history object
     epochs = range(1, len(history.history['loss']) + 1)
@@ -119,7 +119,7 @@ if __name__ == "__main__":
     val_loss = history.history['val_loss']
 
     # Save the plots:
-    with open(R'C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Chess_White_2\training_history_white_2.json', 'w') as file:
+    with open(R'Chess_White_2\training_history_white_2.json', 'w') as file:
         json.dump(history.history, file)
 
     # Create scatter plot for training loss

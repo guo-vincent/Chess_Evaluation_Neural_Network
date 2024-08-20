@@ -3,6 +3,8 @@
 // prevents the NN from accounting for that. And adding another parameter would complicate things.
 // So instead, we'll just make 2 NN models.
 // Outputs WhiteFinal.csv and BlackFinal.csv
+// Use -std=c++20
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -61,9 +63,9 @@ void process_csv(const std::string& input_filename, const std::string& white_fil
 }
 
 int main() {
-    std::string input_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/Final.csv";
-    std::string white_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/WhiteFinal.csv";
-    std::string black_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/BlackFinal.csv";
+    std::string input_filename = "CSVFiles/Final.csv";
+    std::string white_filename = "CSVFiles/WhiteFinal.csv";
+    std::string black_filename = "CSVFiles/BlackFinal.csv";
     
     process_csv(input_filename, white_filename, black_filename);
     

@@ -3,6 +3,8 @@
 // mean closer to checkmate. Neural nets won't understand that, so instead we replace it with 
 // a function that gives ridiculosly high evaluations in those positions
 // Outputs the Final.csv file (filename should be changed)
+// Use -std=c++20 to compile (other compiler versions have not been tested)
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -98,8 +100,8 @@ void process_csv(const std::string& input_filename, const std::string& output_fi
 }
 
 int main() {
-    std::string input_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/FilteredchessData.csv";
-    std::string output_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/Final.csv";
+    std::string input_filename = "CSVFiles/FilteredchessData.csv";
+    std::string output_filename = "CSVFiles/Final.csv";
     
     process_csv(input_filename, output_filename);
     std::cout << removed;

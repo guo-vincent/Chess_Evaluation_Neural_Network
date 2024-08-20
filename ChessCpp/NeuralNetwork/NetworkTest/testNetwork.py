@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import joblib
+import os
 
 def read_matrix(file_name, number_matrixes):
     # Rows to read: header + (number of matrices * 9 rows per matrix)
@@ -20,12 +21,18 @@ def read_matrix(file_name, number_matrixes):
     
     return matrices
 
+# Code that allows for this file system to work:
+def get_path(script_path, relative_path):
+    script_dir = os.path.dirname(script_path)
+    neuralnetwork_dir = os.path.dirname(script_dir)
+    return os.path.join(neuralnetwork_dir, relative_path)
+
 if __name__ == "__main__":
-    matrices_white = read_matrix(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\CSVFiles\test.csv", 1)
+    matrices_white = read_matrix(get_path(__file__, "CSVFiles/test.csv"), 1)
     print(matrices_white[0])
 
     # Load the SavedModel
-    model = tf.saved_model.load(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Chess_White_2")
+    model = tf.saved_model.load(get_path(__file__, "Chess_White_2"))
 
     # Add channel dimension (1)
     input_matrix = np.expand_dims(matrices_white[0]/100, axis=-1)  # Shape (8, 8, 1)
@@ -45,7 +52,7 @@ if __name__ == "__main__":
 
     # Perform inference
     results = infer(input_tensor)
-    scaler = joblib.load(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Scalers\ScalerWhite.pkl")
+    scaler = joblib.load(get_path(__file__, "Scalers/ScalerWhite.pkl"))
     output_tensor = results['output_0'] 
 
     # Convert the tensor to a NumPy array

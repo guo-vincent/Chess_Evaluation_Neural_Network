@@ -1,0 +1,13 @@
+# Include directories
+include_directories(${CMAKE_SOURCE_DIR})
+
+set(CMAKE_CXX_STANDARD 17)
+
+# List source files
+set(SOURCES
+    analysis.cpp
+    # Add other source files if needed
+)
+
+# Create executable or library
+add_executable(analysis_executable ${SOURCES})

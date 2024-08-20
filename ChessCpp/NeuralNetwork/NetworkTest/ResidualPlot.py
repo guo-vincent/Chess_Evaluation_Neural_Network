@@ -4,13 +4,20 @@ import pandas as pd
 from sklearn import preprocessing
 import tensorflow as tf
 import joblib
+import os
+
+# Code that allows for this file system to work:
+def get_path(script_path, relative_path):
+    script_dir = os.path.dirname(script_path)
+    neuralnetwork_dir = os.path.dirname(script_dir)
+    return os.path.join(neuralnetwork_dir, relative_path)
 
 total_number = 12956364 # Number of matrices in the file
 white_matrices_total = 6473070
 black_matrices_total = 6483294
-file_name_white = R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\CSVFiles\White.csv"
-file_name_black = R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\CSVFiles\Black.csv"
-number_matrixes_white = 100000 #6473070    # Specify the number of matrices you want to read
+file_name_white = get_path(__file__, R"CSVFiles/White.csv")
+file_name_black = get_path(__file__, R"CSVFiles/Black.csv")
+number_matrixes_white = 6473070    # Specify the number of matrices you want to read
 number_matrixes_black = 6483294    # Specify the number of matrices you want to read
 
 def read_matrix(file_name, number_matrixes):
@@ -46,13 +53,13 @@ if __name__ == "__main__":
     scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
     normalized_y_white = scaler.fit_transform(y_white).flatten()
 
-    model1 = tf.saved_model.load(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Chess_White")
-    model2 = tf.saved_model.load(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Chess_White_2")
+    model1 = tf.saved_model.load(get_path(__file__, "Chess_White"))
+    model2 = tf.saved_model.load(get_path(__file__, "Chess_White_2"))
 
     # Create a residual plot
     Predictions = []
     infer2 = model2.signatures['serving_default']
-    scaler = joblib.load(R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\Scalers\ScalerWhite.pkl")
+    scaler = joblib.load(get_path(__file__, "Scalers/ScalerWhite.pkl"))
     for matrix in X_white:
         matrix = np.expand_dims(matrix, axis=-1)  # Shape (8, 8, 1)
         matrix = np.expand_dims(matrix, axis=0)   # Shape (1, 8, 8, 1)

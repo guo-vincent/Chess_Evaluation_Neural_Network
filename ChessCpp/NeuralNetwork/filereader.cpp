@@ -2,6 +2,7 @@
 // FENs don't fit into CNNs so we have to transform them into tensors. Or at least something easy
 // enough to convert into a tensor.
 // Outputs White.csv and Black.csv
+// use -std=c++20
 
 // BUG: First matrix is a zero matrix, so one will need to go and edit it out. All other matrices are normal
 #include <algorithm>
@@ -10,7 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "chess.hpp"
+#include "../../chess.hpp"
 
 using BoardRow = std::array<int, 8>;
 
@@ -98,7 +99,7 @@ int main() {
     // std::array<BoardRow, 8> rows = bitboard_to_rows(board);
     // write_rows_to_csv(rows, "0", std::ofstream("test.csv"));
 
-    process_csv_and_write_to_csv("C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/WhiteFinal.csv", "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/White.csv");
-    process_csv_and_write_to_csv("C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/BlackFinal.csv", "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/Black.csv");
+    process_csv_and_write_to_csv("CSVFiles/WhiteFinal.csv", "CSVFiles/White2.csv");
+    process_csv_and_write_to_csv("CSVFiles/BlackFinal.csv", "CSVFiles/Black2.csv");
     return 0;
 }

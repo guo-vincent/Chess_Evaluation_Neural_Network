@@ -4,7 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include "chess.hpp"
+#include "../../../chess.hpp"
 
 // Using floats to normalize values between 0 and 1
 using BoardRow = std::array<int, 8>;
@@ -60,7 +60,7 @@ void write_header(const std::string &filename) {
 
 int main() {
     try {
-        const std::string filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/test.csv";
+        const std::string filename = "../CSVFiles/test.csv";
 
         // Write the header (overwrite the file if it exists)
         write_header(filename);

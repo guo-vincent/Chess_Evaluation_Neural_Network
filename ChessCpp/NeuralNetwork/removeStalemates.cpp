@@ -2,12 +2,14 @@
 // These can be hard to distinguish from actual positions where both sides are equal, which may
 // confuse the neural net. Hence we remove them.
 // Outputs the FilteredchessData.csv file
+// use -std=c++20
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <string>
-#include "C:\Chess_Engine\chess-engine\ChessCpp\chess.hpp"
+#include "../../chess.hpp"
 
 int eliminated_boards = 0;
 
@@ -48,6 +50,7 @@ void process_csv(const std::string& input_filename, const std::string& output_fi
                 if (eliminate_stalemates(board_value)) {
                     row_values = line; // Keep the entire row if function returns true
                     outfile << row_values << std::endl;
+                    outfile.flush();
                 }
             }
         }
@@ -59,11 +62,9 @@ void process_csv(const std::string& input_filename, const std::string& output_fi
     outfile.close();
 }
 
-
-
 int main() {
-    std::string input_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/chessData.csv";
-    std::string output_filename = "C:/Chess_Engine/chess-engine/ChessCpp/NeuralNetwork/CSVFiles/FilteredchessData.csv";
+    std::string input_filename = "CSVFiles/chessData.csv";
+    std::string output_filename = "CSVFiles/FilteredchessData.csv";
     
     process_csv(input_filename, output_filename);
     std::cout << eliminated_boards;

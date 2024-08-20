@@ -5,12 +5,27 @@ from collections import Counter
 from scipy.stats import kstest, kurtosis, skew
 from heapq import nlargest
 from sklearn import preprocessing
+import os
+
+# Code that allows for this file system to work:
+def get_path(script_file, filename):
+    """
+    Returns the full path to a file located in the 'CSVfiles' directory relative to the script file.
+
+    :param script_file: Path to the current script file
+    :param filename: Name of the file to locate in the 'CSVfiles' directory
+    :return: Full path to the specified file
+    """
+    script_dir = os.path.dirname(script_file)
+    chesscpp_dir = os.path.dirname(script_dir)
+    csv_dir = os.path.join(chesscpp_dir, 'NeuralNetwork', 'CSVFiles')
+    return os.path.join(csv_dir, filename)
 
 total_number = 12956364 # Number of matrices in the file
 white_matrices_total = 6473070
 black_matrices_total = 6483294
-file_name_white = R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\WhiteFinal.csv"
-file_name_black = R"C:\Chess_Engine\chess-engine\ChessCpp\NeuralNetwork\BlackFinal.csv"
+file_name_white = get_path(__file__, "WhiteFinal.csv")
+file_name_black = get_path(__file__, "BlackFinal.csv")
 number_matrixes_white = 6473070    # Specify the number of matrices you want to read
 number_matrixes_black = 6483294#5  # Specify the number of matrices you want to read
 
@@ -24,7 +39,7 @@ def read_evaluations(file_name, number):
     matrices = []
 
     # Read the CSV file
-    data = pd.read_csv(file_name, usecols=[1], header=None, nrows=number)
+    data = pd.read_csv(file_name, usecols=[1], header=None, nrows=number, skiprows=1)
 
     # Iterate over each row
     for row in data.itertuples(index=False):
