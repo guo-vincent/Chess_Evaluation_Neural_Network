@@ -10,8 +10,8 @@ import json
 total_number = 12956364 # Number of matrices in the file
 white_matrices_total = 6473070
 black_matrices_total = 6483294
-file_name_white = R"CSVFiles\White.csv"
-file_name_black = R"CSVFiles\Black.csv"
+file_name_white = R"CSVFiles/White.csv"
+file_name_black = R"CSVFiles/Black.csv"
 number_matrixes_white = 6473070    # Specify the number of matrices you want to read
 number_matrixes_black = 6483294    # Specify the number of matrices you want to read
 
@@ -63,8 +63,13 @@ if __name__ == "__main__":
         layers.Conv2D(filters=64, kernel_size=(5, 5), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
         layers.BatchNormalization(epsilon=1e-5),
         layers.LeakyReLU(0.1),
+        
+        layers.Conv2D(filters=64, kernel_size=(7, 7), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
+        layers.BatchNormalization(epsilon=1e-5),
+        layers.LeakyReLU(0.1),
+        layers.Dropout(0.1, seed=42),
 
-        layers.Conv2D(filters=64, kernel_size=(8, 8), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
+        layers.Conv2D(filters=32, kernel_size=(8, 8), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
         layers.BatchNormalization(epsilon=1e-5),
         layers.LeakyReLU(0.1),
         
@@ -85,7 +90,7 @@ if __name__ == "__main__":
         layers.Dense(1, activation='linear')
     ])
 
-    optimizer = optimizers.Adam(learning_rate=0.0002)
+    optimizer = optimizers.Adam(learning_rate=0.00005, amsgrad=True)
 
     # Compile the model
     model_white.compile(optimizer=optimizer,
@@ -95,13 +100,13 @@ if __name__ == "__main__":
     # Print model summary
     print(model_white.summary())
 
-    early_stopping = callbacks.EarlyStopping(monitor='val_loss',patience=5,restore_best_weights=True)
+    early_stopping = callbacks.EarlyStopping(monitor='val_loss',patience=10,restore_best_weights=True)
     reduceLr = callbacks.ReduceLROnPlateau(monitor='val_loss',patience=2,factor=0.1)
 
     # Fit the model
     history = model_white.fit(X_train, y_train,
-                            epochs=25,
-                            batch_size=1024,
+                            epochs=100,
+                            batch_size=2048,
                             validation_data=(X_val, y_val),
                             shuffle=True,
                             callbacks=[early_stopping, reduceLr])
@@ -111,7 +116,7 @@ if __name__ == "__main__":
     print(f"Validation Loss: {loss}")
     print(f"Validation Metric: {metric}")
 
-    model_white.export(R"Chess_White_2")
+    model_white.export(R"Chess_White_3")
 
     # Extract loss values from the history object
     epochs = range(1, len(history.history['loss']) + 1)
@@ -119,13 +124,13 @@ if __name__ == "__main__":
     val_loss = history.history['val_loss']
 
     # Save the plots:
-    with open(R'Chess_White_2\training_history_white_2.json', 'w') as file:
+    with open(R'Chess_White_3/training_history_white_3.json', 'w') as file:
         json.dump(history.history, file)
 
     # Create scatter plot for training loss
     plt.figure(figsize=(10, 6))
     plt.scatter(epochs, loss, s=1, alpha=0.5, label='Training Loss')
-
+    
     # Create scatter plot for validation loss
     plt.scatter(epochs, val_loss, s=1, alpha=0.5, label='Validation Loss')
 

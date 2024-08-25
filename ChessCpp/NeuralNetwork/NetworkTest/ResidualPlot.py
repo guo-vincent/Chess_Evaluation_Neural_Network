@@ -53,8 +53,7 @@ if __name__ == "__main__":
     scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
     normalized_y_white = scaler.fit_transform(y_white).flatten()
 
-    model1 = tf.saved_model.load(get_path(__file__, "Chess_White"))
-    model2 = tf.saved_model.load(get_path(__file__, "Chess_White_2"))
+    model2 = tf.saved_model.load(get_path(__file__, "Chess_White_3"))
 
     # Create a residual plot
     Predictions = []
@@ -78,7 +77,7 @@ if __name__ == "__main__":
     max_value = max(max(y_white), max(Predictions))
     plt.plot([min_value, max_value], [min_value, max_value], color='red', linestyle='--', linewidth=2, label="y = x")
     plt.xlabel("True Value")
-    plt.ylabel("Estimated Model 1 Predictions")
+    plt.ylabel("Estimated Model 3 Predictions")
     plt.title("True Value vs Model Prediction")
     plt.legend()
     plt.show()
