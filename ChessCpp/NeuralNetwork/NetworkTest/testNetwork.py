@@ -53,14 +53,14 @@ if __name__ == "__main__":
     meta_infer = meta_model.signatures['serving_default']
 
     print("Model input signature:")
-    for key, value in infer.structured_input_signature[1].items():
+    for key, value in meta_infer.structured_input_signature[1].items():
         print(f"{key}: {value}")
 
     # Perform inference
     results = infer(input_tensor)
     results2 = infer2(input_tensor)
     results3 = infer3(input_tensor)
-    meta_results = meta_infer([results, results2, results3])
+    meta_results = meta_infer(tf.convert_to_tensor([[results['output_0'][0][0], results2['output_0'][0][0], results3['output_0'][0][0]]]))
     
     scaler = joblib.load(get_path(__file__, "Scalers/ScalerWhite.pkl"))
     output_tensor = meta_results['output_0'] 

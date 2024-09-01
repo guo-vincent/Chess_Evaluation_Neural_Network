@@ -8,11 +8,8 @@ import json
 
 # Takes on average 15 minutes to process.
 total_number = 12956364 # Number of matrices in the file
-white_matrices_total = 6473070
 black_matrices_total = 6483294
-file_name_white = R"CSVFiles/White.csv"
 file_name_black = R"CSVFiles/Black.csv"
-number_matrixes_white = 6473070    # Specify the number of matrices you want to read
 number_matrixes_black = 6483294    # Specify the number of matrices you want to read
 
 def read_matrix(file_name, number_matrixes):
@@ -34,27 +31,27 @@ def read_matrix(file_name, number_matrixes):
     return matrices
 
 if __name__ == "__main__":
-    matrices_white = read_matrix(file_name_white, number_matrixes_white)
+    matrices_black = read_matrix(file_name_black, number_matrixes_black)
     print("Done!")
 
     # Extract matrices and evaluations
-    X_white = np.array([matrix/100 for matrix, _ in matrices_white])
-    y_white = np.array([evaluation for _, evaluation in matrices_white])
+    X_black = np.array([matrix/100 for matrix, _ in matrices_black])
+    y_black = np.array([evaluation for _, evaluation in matrices_black])
 
     # Convert evaluations to numpy array
-    y_white = y_white.reshape(-1, 1)
+    y_black = y_black.reshape(-1, 1)
 
     # Normalize the evaluations using MinMaxScaler
     scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
-    normalized_y_white = scaler.fit_transform(y_white).flatten()
+    normalized_y_black = scaler.fit_transform(y_black).flatten()
 
-    # Reshape X_white to include the channel dimension
-    X_white = X_white.reshape((X_white.shape[0], 8, 8, 1))  # (number_matrixes, 8, 8, 1)
+    # Reshape X_black to include the channel dimension
+    X_black = X_black.reshape((X_black.shape[0], 8, 8, 1))  # (number_matrixes, 8, 8, 1)
 
     # Split data into training and validation sets. Set 1 has random state 42.
-    X_train, X_val, y_train, y_val = train_test_split(X_white, normalized_y_white, test_size=0.2, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(X_black, normalized_y_black, test_size=0.2, random_state=42)
 
-    model_white = models.Sequential([
+    model_black = models.Sequential([
         Input(shape=(8, 8, 1)),
         layers.Conv2D(filters=64, kernel_size=(3, 3), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
         layers.BatchNormalization(epsilon=1e-5),
@@ -93,18 +90,18 @@ if __name__ == "__main__":
     optimizer = optimizers.Adam(learning_rate=0.00005, amsgrad=True)
 
     # Compile the model
-    model_white.compile(optimizer=optimizer,
+    model_black.compile(optimizer=optimizer,
                         loss=losses.MeanAbsoluteError(),
                         metrics=['mean_absolute_error'])
 
     # Print model summary
-    print(model_white.summary())
+    print(model_black.summary())
 
     early_stopping = callbacks.EarlyStopping(monitor='val_loss',patience=10,restore_best_weights=True)
     reduceLr = callbacks.ReduceLROnPlateau(monitor='val_loss',patience=2,factor=0.1)
 
     # Fit the model
-    history = model_white.fit(X_train, y_train,
+    history = model_black.fit(X_train, y_train,
                             epochs=100,
                             batch_size=2048,
                             validation_data=(X_val, y_val),
@@ -112,11 +109,11 @@ if __name__ == "__main__":
                             callbacks=[early_stopping, reduceLr])
 
     # Evaluate the model on the validation data
-    loss, metric = model_white.evaluate(X_val, y_val)
+    loss, metric = model_black.evaluate(X_val, y_val)
     print(f"Validation Loss: {loss}")
     print(f"Validation Metric: {metric}")
 
-    model_white.export(R"Chess_White_3")
+    model_black.export(R"Chess_Black")
 
     # Extract loss values from the history object
     epochs = range(1, len(history.history['loss']) + 1)
@@ -124,7 +121,7 @@ if __name__ == "__main__":
     val_loss = history.history['val_loss']
 
     # Save the plots:
-    with open(R'Chess_White_3/training_history_white_3.json', 'w') as file:
+    with open(R'Chess_Black/training_history_black.json', 'w') as file:
         json.dump(history.history, file)
 
     # Create scatter plot for training loss
