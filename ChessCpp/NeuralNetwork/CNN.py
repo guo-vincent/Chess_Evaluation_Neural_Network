@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
-from keras import layers, models, Input, callbacks, optimizers, regularizers, losses
+from keras import layers, models, Input, callbacks, optimizers, regularizers, initializers
 from sklearn.model_selection import train_test_split
 from sklearn import preprocessing
 import matplotlib.pyplot as plt
 import json
+import tensorflow as tf
 
 # Takes on average 15 minutes to process.
 total_number = 12956364 # Number of matrices in the file
@@ -50,6 +51,10 @@ if __name__ == "__main__":
 
     # Split data into training and validation sets. Set 1 has random state 42.
     X_train, X_val, y_train, y_val = train_test_split(X_black, normalized_y_black, test_size=0.2, random_state=42)
+    
+    # Root loss, since output values are in [-1, 1]. Epilson is needed to avoid nan loss through square rooting small negative values via float precision issues.
+    def root_loss(y_true, y_pred, epsilon=1e-8):
+        return tf.reduce_mean(tf.sqrt(tf.maximum(tf.abs(y_true - y_pred), epsilon)))
 
     model_black = models.Sequential([
         Input(shape=(8, 8, 1)),
@@ -87,20 +92,19 @@ if __name__ == "__main__":
         layers.Dense(1, activation='linear')
     ])
 
-    optimizer = optimizers.Adam(learning_rate=0.00005, amsgrad=True)
+    # I wonder how much the learning rate can be increased. lr = .00007 seems to be stable.
+    optimizer = optimizers.Adam(learning_rate=0.00007, amsgrad=True, clipnorm=1.0) # New loss prone to exploding gradients
 
-    # Compile the model
-    model_black.compile(optimizer=optimizer,
-                        loss=losses.MeanAbsoluteError(),
+    model_black.compile(optimizer=optimizer, 
+                        loss=root_loss,
                         metrics=['mean_absolute_error'])
 
-    # Print model summary
+    # Callbacks
     print(model_black.summary())
 
     early_stopping = callbacks.EarlyStopping(monitor='val_loss',patience=10,restore_best_weights=True)
-    reduceLr = callbacks.ReduceLROnPlateau(monitor='val_loss',patience=2,factor=0.1)
+    reduceLr = callbacks.ReduceLROnPlateau(monitor='val_loss',patience=3,factor=0.1)
 
-    # Fit the model
     history = model_black.fit(X_train, y_train,
                             epochs=100,
                             batch_size=2048,
@@ -113,7 +117,7 @@ if __name__ == "__main__":
     print(f"Validation Loss: {loss}")
     print(f"Validation Metric: {metric}")
 
-    model_black.export(R"Chess_Black")
+    model_black.export(R"Chess_Black_2")
 
     # Extract loss values from the history object
     epochs = range(1, len(history.history['loss']) + 1)
@@ -121,7 +125,7 @@ if __name__ == "__main__":
     val_loss = history.history['val_loss']
 
     # Save the plots:
-    with open(R'Chess_Black/training_history_black.json', 'w') as file:
+    with open(R'Chess_Black/training_history_black_2.json', 'w') as file:
         json.dump(history.history, file)
 
     # Create scatter plot for training loss

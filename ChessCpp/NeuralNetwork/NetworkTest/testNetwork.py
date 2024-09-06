@@ -38,7 +38,7 @@ if __name__ == "__main__":
     meta_model = tf.saved_model.load(get_path(__file__, "Chess_White_Ensemble"))
 
     # Add channel dimension (1)
-    input_matrix = np.expand_dims(matrices_white[0]/100, axis=-1)  # Shape (8, 8, 1)
+    input_matrix = np.expand_dims(matrices_white[0]/100, axis=-1)  # Shape (8, 8, 1). Note that values are scaled down by 100. 
 
     # Add batch dimension (1)
     input_matrix = np.expand_dims(input_matrix, axis=0)   # Shape (1, 8, 8, 1)
@@ -65,8 +65,7 @@ if __name__ == "__main__":
     scaler = joblib.load(get_path(__file__, "Scalers/ScalerWhite.pkl"))
     output_tensor = meta_results['output_0'] 
 
-    output_array = output_tensor.numpy()
-    inverse_transformed_output = scaler.inverse_transform(output_array)
+    inverse_transformed_output = scaler.inverse_transform(output_tensor.numpy())
 
     print(inverse_transformed_output[0][0])
 
