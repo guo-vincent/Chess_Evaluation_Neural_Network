@@ -53,71 +53,75 @@ if __name__ == "__main__":
     X_train, X_val, y_train, y_val = train_test_split(X_black, normalized_y_black, test_size=0.2, random_state=42)
     
     # Root loss, since output values are in [-1, 1]. Epilson is needed to avoid nan loss through square rooting small negative values via float precision issues.
-    def root_loss(y_true, y_pred, epsilon=1e-8):
-        return tf.reduce_mean(tf.sqrt(tf.maximum(tf.abs(y_true - y_pred), epsilon)))
+    def root_loss(y_true, y_pred, epsilon=1e-8): # Second tf.square term used to counterbalance overabundance of evaluations near 0 and convergence to evaluations near 0.
+        diff = tf.abs(y_true - y_pred)
+        safe_diff = tf.maximum(diff, epsilon)  # Ensure we don't get near zero
+        sqrt_loss = tf.sqrt(safe_diff)
+        scaling_factor = tf.square(tf.math.exp(tf.clip_by_value(y_true, 0, float('inf'))))  # Clipping to avoid negative values in exp
+        return tf.reduce_mean(sqrt_loss * scaling_factor)
 
     model_black = models.Sequential([
         Input(shape=(8, 8, 1)),
         layers.Conv2D(filters=64, kernel_size=(3, 3), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
         
         layers.Conv2D(filters=64, kernel_size=(5, 5), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
         
         layers.Conv2D(filters=64, kernel_size=(7, 7), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
         layers.Dropout(0.1, seed=42),
 
         layers.Conv2D(filters=32, kernel_size=(8, 8), kernel_regularizer=regularizers.l2(0.0001), padding='same'),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
         
         layers.Flatten(),
         
         layers.Dense(1024,kernel_regularizer=regularizers.l2(0.0001)),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
         
         layers.Dense(512,kernel_regularizer=regularizers.l2(0.0001)),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
 
         layers.Dense(216,kernel_regularizer=regularizers.l2(0.0001)),
-        layers.BatchNormalization(epsilon=1e-5),
+        layers.BatchNormalization(epsilon=1e-8),
         layers.LeakyReLU(0.1),
         
         layers.Dense(1, activation='linear')
     ])
 
-    # I wonder how much the learning rate can be increased. lr = .00007 seems to be stable.
-    optimizer = optimizers.Adam(learning_rate=0.00007, amsgrad=True, clipnorm=1.0) # New loss prone to exploding gradients
+    # I wonder how much the learning rate can be increased. lr = .0005 seems to be stable.
+    optimizer = optimizers.Adam(learning_rate=0.0005, amsgrad=True)
 
     model_black.compile(optimizer=optimizer, 
-                        loss=root_loss,
+                        loss=root_loss, 
                         metrics=['mean_absolute_error'])
 
     # Callbacks
     print(model_black.summary())
 
     early_stopping = callbacks.EarlyStopping(monitor='val_loss',patience=10,restore_best_weights=True)
-    reduceLr = callbacks.ReduceLROnPlateau(monitor='val_loss',patience=3,factor=0.1)
+    reduceLr = callbacks.ReduceLROnPlateau(monitor='val_loss',patience=3,factor=0.4)
 
     history = model_black.fit(X_train, y_train,
-                            epochs=100,
+                            epochs=50,
                             batch_size=2048,
                             validation_data=(X_val, y_val),
                             shuffle=True,
                             callbacks=[early_stopping, reduceLr])
 
     # Evaluate the model on the validation data
-    loss, metric = model_black.evaluate(X_val, y_val)
+    loss, metric = model_black.evaluate(X_val, y_val, verbose=1)
     print(f"Validation Loss: {loss}")
     print(f"Validation Metric: {metric}")
 
-    model_black.export(R"Chess_Black_2")
+    model_black.export(R"Chess_Black_3")
 
     # Extract loss values from the history object
     epochs = range(1, len(history.history['loss']) + 1)
@@ -125,7 +129,7 @@ if __name__ == "__main__":
     val_loss = history.history['val_loss']
 
     # Save the plots:
-    with open(R'Chess_Black/training_history_black_2.json', 'w') as file:
+    with open(R'Chess_Black_3/training_history_black_3.json', 'w') as file:
         json.dump(history.history, file)
 
     # Create scatter plot for training loss

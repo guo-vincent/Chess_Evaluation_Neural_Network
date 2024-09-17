@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(Chess_Evaluation_Neural_Network)
 
-# Specify C++ standard
 set(CMAKE_CXX_STANDARD 17)
 
-# Include the root directory in include paths
 include_directories(${CMAKE_SOURCE_DIR})
 
-# Add subdirectories
+# Subdirectories
 add_subdirectory(Analysis)
 add_subdirectory(NeuralNetwork)

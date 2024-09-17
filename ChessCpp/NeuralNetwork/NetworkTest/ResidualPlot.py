@@ -53,12 +53,12 @@ if __name__ == "__main__":
     scaler = preprocessing.MinMaxScaler(feature_range=(-1, 1))
     normalized_y_white = scaler.fit_transform(y_white).flatten()
 
-    model2 = tf.saved_model.load(get_path(__file__, "Chess_White_3"))
+    model2 = tf.saved_model.load(get_path(__file__, "Chess_Black_3"))
 
     # Create a residual plot
     Predictions = []
     infer2 = model2.signatures['serving_default']
-    scaler = joblib.load(get_path(__file__, "Scalers/ScalerWhite.pkl"))
+    scaler = joblib.load(get_path(__file__, "Scalers/ScalerBlack.pkl"))
     for matrix in X_white:
         matrix = np.expand_dims(matrix, axis=-1)  # Shape (8, 8, 1)
         matrix = np.expand_dims(matrix, axis=0)   # Shape (1, 8, 8, 1)
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     max_value = max(max(y_white), max(Predictions))
     plt.plot([min_value, max_value], [min_value, max_value], color='red', linestyle='--', linewidth=2, label="y = x")
     plt.xlabel("True Value")
-    plt.ylabel("Estimated Model 3 Predictions")
+    plt.ylabel("Estimated Model 3 (black) Predictions")
     plt.title("True Value vs Model Prediction")
     plt.legend()
     plt.show()
