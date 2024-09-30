@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 total_number = 12956364 # Number of matrices in the file
 white_matrices_total = 6473070
-file_name_white = "CSVFiles/White.csv"
+file_name_white = "CSVFiles/Black.csv"
 number_matrixes_white = 6473070    # Specify the number of matrices you want to read
 
 def read_matrix(file_name, number_matrixes):
@@ -49,16 +49,16 @@ if __name__ == "__main__":
     normalized_y_white = scaler.fit_transform(y_white).flatten()
 
     # Load Models
-    model1 = tf.saved_model.load("Chess_White")
-    model2 = tf.saved_model.load("Chess_White_2")
-    model3 = tf.saved_model.load("Chess_White_3")
+    model1 = tf.saved_model.load("Chess_Black")
+    model2 = tf.saved_model.load("Chess_Black_2")
+    model3 = tf.saved_model.load("Chess_Black_3")
 
     # Create Predictions
     predictions1, predictions2, predictions3 = [], [], []
     infer1 = model1.signatures['serving_default']
     infer2 = model2.signatures['serving_default']
     infer3 = model3.signatures['serving_default']
-    scaler = joblib.load("Scalers/ScalerWhite.pkl")
+    scaler = joblib.load("Scalers/ScalerBlack.pkl")
     for matrix in X_white:
         matrix = np.expand_dims(np.expand_dims(matrix, axis=-1), axis=0)  # Shape (1, 8, 8, 1)
         tensor_matrix = tf.convert_to_tensor(matrix)
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     print(f"Validation Loss: {loss}")
     print(f"Validation Metric: {metric}")
     
-    ensemble.export(R"Chess_White_Ensemble")
+    ensemble.export(R"Chess_Black_Ensemble")
 
     # Extract loss values from the history object
     epochs = range(1, len(history.history['loss']) + 1)
@@ -124,8 +124,6 @@ if __name__ == "__main__":
     # Plot the training and validation loss
     plt.figure(figsize=(10, 6))
     plt.plot(epochs, loss, label='Training Loss', color='blue')
-    if val_loss:
-        plt.plot(epochs, val_loss, label='Validation Loss', color='red')
     plt.title('Training and Validation Loss')
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
@@ -133,10 +131,10 @@ if __name__ == "__main__":
     plt.grid(True)
 
     # Save the plot
-    plt.savefig(R'Chess_White_3/loss_plot_white_3.png')
+    plt.savefig(R'Chess_Black_3/loss_plot_black_3.png')
 
     # Save the training history to a JSON file
-    with open(R'Chess_White_3/training_history_white_3.json', 'w') as file:
+    with open(R'Chess_Black_3/training_history_black_3.json', 'w') as file:
         json.dump(history.history, file)
 
     plt.show()

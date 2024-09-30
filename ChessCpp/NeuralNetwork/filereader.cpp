@@ -15,6 +15,7 @@
 
 using BoardRow = std::array<int, 8>;
 
+// Map for translating chess pieces to corresponding integer values
 std::unordered_map<chess::Piece, int> piece_map = {
     {chess::Piece::WHITEPAWN, 1}, {chess::Piece::WHITEKNIGHT, 3}, {chess::Piece::WHITEBISHOP, 4}, {chess::Piece::WHITEROOK, 5}, {chess::Piece::WHITEQUEEN, 9}, {chess::Piece::WHITEKING, 100},
     {chess::Piece::BLACKPAWN, -1}, {chess::Piece::BLACKKNIGHT, -3}, {chess::Piece::BLACKBISHOP, -4}, {chess::Piece::BLACKROOK, -5}, {chess::Piece::BLACKQUEEN, -9}, {chess::Piece::BLACKKING, -100},
@@ -29,19 +30,19 @@ std::array<BoardRow, 8> bitboard_to_rows(const chess::Board &board) {
             chess::Square sq(sq_index);
             int row = sq_index / 8;
             int col = sq_index % 8;
-            // Writing rows[col][rows] = piece_map[board.at<chess::Piece>(sq)] transposes the matrix
             rows[row][col] = piece_map[board.at<chess::Piece>(sq)];
         }
     }
     return rows;
 }
 
-void write_rows_to_csv(const std::array<BoardRow, 8> &rows, const std::string &eval_str, std::ofstream &ofs) {
+// Modified function to include the side parameter and write to the CSV file
+void write_rows_to_csv(const std::array<BoardRow, 8> &rows, const std::string &eval_str, const std::string &side, std::ofstream &ofs) {
     if (!ofs) {
         throw std::runtime_error("Failed to open file for writing");
     }
 
-    // Write the matrix data to the file with row headers
+    // Write the matrix data to the file
     for (size_t row_idx = 0; row_idx < rows.size(); ++row_idx) {
         for (size_t col_idx = 0; col_idx < rows[row_idx].size(); ++col_idx) {
             ofs << rows[row_idx][col_idx];
@@ -52,11 +53,12 @@ void write_rows_to_csv(const std::array<BoardRow, 8> &rows, const std::string &e
         ofs << std::endl;
     }
 
-    // Write the evaluation value to the last row
-    ofs << std::string(rows[0].size(), ',') << eval_str << std::endl;
+    // Write the evaluation value and side to the last row
+    ofs << std::string(rows[0].size(), ',') << eval_str << "," << side << std::endl;
 }
 
-void process_csv_and_write_to_csv(const std::string& input_filename, const std::string& output_filename) {
+// Write information to the CSV file
+void process_csv_and_write_to_csv(const std::string& input_filename, const std::string& output_filename, const std::string& side) {
     std::ifstream infile(input_filename);
     std::ofstream outfile(output_filename);
     std::string line;
@@ -72,7 +74,7 @@ void process_csv_and_write_to_csv(const std::string& input_filename, const std::
     }
 
     // Write CSV header
-    outfile << "col0,col1,col2,col3,col4,col5,col6,col7,Evaluation" << std::endl;
+    outfile << "col0,col1,col2,col3,col4,col5,col6,col7,Evaluation,Side" << std::endl;
 
     // Process rows
     while (std::getline(infile, line)) {
@@ -85,7 +87,7 @@ void process_csv_and_write_to_csv(const std::string& input_filename, const std::
 
             // Convert board to rows
             std::array<BoardRow, 8> rows = bitboard_to_rows(board);
-            write_rows_to_csv(rows, eval_str, outfile);
+            write_rows_to_csv(rows, eval_str, side, outfile);
         }
     }
 
@@ -95,11 +97,15 @@ void process_csv_and_write_to_csv(const std::string& input_filename, const std::
 
 int main() {
     // Uncomment to test single board
-    // chess::Board board(chess::constants::STARTPOS);
-    // std::array<BoardRow, 8> rows = bitboard_to_rows(board);
-    // write_rows_to_csv(rows, "0", std::ofstream("test.csv"));
+    chess::Board board(chess::constants::STARTPOS);
+    std::array<BoardRow, 8> rows = bitboard_to_rows(board);
+    // Header has to be manually specified when not using process_csv_and_write_to_csv.
+    std::ofstream test("/Users/vincentguo/Chess_Engine/Chess_Evaluation_Neural_Network/ChessCpp/NeuralNetwork/CSVFiles/test.csv", std::ios::out);
+    test << "col0,col1,col2,col3,col4,col5,col6,col7,Evaluation,Side" << std::endl;
+    write_rows_to_csv(rows, "0", "White", test);
 
-    process_csv_and_write_to_csv("CSVFiles/WhiteFinal.csv", "CSVFiles/White2.csv");
-    process_csv_and_write_to_csv("CSVFiles/BlackFinal.csv", "CSVFiles/Black2.csv");
+    // Process files
+    // process_csv_and_write_to_csv("CSVFiles/WhiteFinal.csv", "CSVFiles/White2.csv", "White");
+    // process_csv_and_write_to_csv("CSVFiles/BlackFinal.csv", "CSVFiles/Black2.csv", "Black");
     return 0;
 }
