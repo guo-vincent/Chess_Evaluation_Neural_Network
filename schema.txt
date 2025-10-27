@@ -1,0 +1,14 @@
+CHESS_EVALUATION_NEURAL_NETWORK/
+├── setup.py
+├── CMakeLists.txt
+├── src
+│   ├── chess_alg.cpp
+│   └── utils.hpp
+├── main.cpp
+├── chess.hpp
+├── third_party
+│   ├── imgui
+│   ├── onnxruntime
+│   ├── raylib
+│   └── rlimGui
+└── ensemble_white.onnx 

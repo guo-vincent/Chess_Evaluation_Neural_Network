@@ -1,0 +1,19 @@
+{
+  "name": "chess_eval",
+  "data_path": "CSVFiles/Black.csv",
+  "samples": 10000,
+  "save_path": "Chess_Model",
+  "threshold": 100,
+  "batch_size": 4096,
+  "residual_blocks": 3,
+  "filters": 64,
+  "dense_units": 256,
+  "dropout_rate": 0.2,
+  "learning_rate_phase1": 0.001,
+  "learning_rate_phase2": 0.0001,
+  "epochs_phase1": 20,
+  "epochs_phase2": 10,
+  "test_size": 0.1,
+  "show_progress": true,
+  "plot_history": true
+}
